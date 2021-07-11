@@ -1,7 +1,13 @@
 const express = require('express');
 const path = require('path');
+const mongoose = require('mongoose');
+
 const feedRoutes = require('./routes/feed');
 const bodyParser = require('body-parser');
+
+const MONGODB_URI =
+  'mongodb+srv://ronchinodejs:3vPLxB5YBlzDn0R0@cluster0.d74th.mongodb.net/messages';
+
 const app = express();
 
 // app.use(bodyParser.urlencoded({ extended: false })); //x-www-form-urlencoded <form>
@@ -20,6 +26,13 @@ app.use('/', (req, res, next) => {
   res.status(200).json({ message: 'Hello World' });
 });
 
-app.listen(8080, () => {
-  console.log('App is listening at http://localhost:8080');
-});
+mongoose
+  .connect(MONGODB_URI)
+  .then((result) => {
+    app.listen(8080, () => {
+      console.log('App is listening at http://localhost:8080');
+    });
+  })
+  .catch((err) => {
+    console.log(err);
+  });

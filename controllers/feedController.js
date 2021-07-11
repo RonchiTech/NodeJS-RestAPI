@@ -4,7 +4,7 @@ exports.getPosts = (req, res, next) => {
   Post.find()
     .then((posts) => {
       res.status(200).json({
-        posts: posts
+        posts: posts,
       });
     })
     .catch((err) => {
@@ -27,14 +27,19 @@ exports.postPost = (req, res, next) => {
     //   errors: errors.array(),
     // });
   }
-
+  if (!req.file) {
+    const error = new Error('No attached file');
+    error.statusCode = 422;
+    throw error;
+  }
   const title = req.body.title;
   const content = req.body.content;
+  const imageUrl = req.file.path.replace('\\', '/');
   // const imageUrl = req.body.imageUrl;
   //Create Post in DB
   const post = new Post({
     title,
-    imageUrl: 'images/test.jpg',
+    imageUrl: imageUrl,
     content,
     creator: { name: 'Ronchi Floyd' },
   });

@@ -1,18 +1,18 @@
 const { validationResult } = require('express-validator/check');
 const Post = require('../models/post');
 exports.getPosts = (req, res, next) => {
-  res.status(200).json({
-    posts: [
-      {
-        _id: 'a9gk129gj1',
-        title: 'First Post',
-        content: 'This is my first post',
-        imageUrl: '/images/bits.jpg',
-        creator: { name: 'Ronchi Pogi' },
-        createdAt: new Date(),
-      },
-    ],
-  });
+  Post.find()
+    .then((posts) => {
+      res.status(200).json({
+        posts: posts
+      });
+    })
+    .catch((err) => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+    });
 };
 
 exports.postPost = (req, res, next) => {
@@ -49,6 +49,26 @@ exports.postPost = (req, res, next) => {
     })
     .catch((err) => {
       console.log(err);
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+    });
+};
+
+exports.getPost = (req, res, next) => {
+  const postId = req.params.postId;
+
+  Post.findById(postId)
+    .then((post) => {
+      if (!post) {
+        const error = new Error('Post Not Found');
+        error.statusCode = 404;
+        throw error;
+      }
+      res.status(200).json({ post: post });
+    })
+    .catch((err) => {
       if (!err.statusCode) {
         err.statusCode = 500;
       }

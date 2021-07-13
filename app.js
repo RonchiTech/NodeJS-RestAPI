@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const multer = require('multer');
 const { v4: uuidv4 } = require('uuid');
 const feedRoutes = require('./routes/feed');
+const authRoutes = require('./routes/auth');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const MONGODB_URI =
@@ -49,6 +50,7 @@ app.use((req, res, next) => {
 });
 
 app.use('/api', feedRoutes);
+app.use('/auth', authRoutes);
 
 // app.use('/', (req, res, next) => {
 //   res.status(200).json({ message: 'Hello World' });

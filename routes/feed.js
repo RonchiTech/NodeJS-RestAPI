@@ -14,6 +14,16 @@ router.post(
   feedController.postPost
 );
 
-router.get('/post/:postId',  feedController.getPost)
+router.get('/post/:postId', feedController.getPost);
 
+// router.patch('post/:postId', feedController.patchPost);
+
+router.patch(
+  '/post/:postId',
+  [
+    body('title').trim().isLength({ min: 5 }),
+    body('content').trim().isLength({ min: 5 }),
+  ],
+  feedController.patchPost
+);
 module.exports = router;

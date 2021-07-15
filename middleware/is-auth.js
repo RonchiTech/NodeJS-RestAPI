@@ -20,6 +20,7 @@ module.exports = (req, res, next) => {
     error.statusCode = 401;
     throw err;
   }
-  req.userId = decodedToken.userId;
+  req.userId = decodedToken.id;
+  console.log('USERID:::', decodedToken);
   next();
 };

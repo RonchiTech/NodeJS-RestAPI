@@ -68,7 +68,7 @@ exports.postPost = (req, res, next) => {
       return user.save();
     })
     .then((result) => {
-      console.log('POST:::',post);
+      console.log('POST:::', post);
       console.log('result:::', result);
       res.status(201).json({
         message: 'Post created successfully!',
@@ -132,6 +132,11 @@ exports.patchPost = (req, res, next) => {
         error.statusCode = 404;
         throw error;
       }
+      if (post.creator.toString() !== req.userId) {
+        const errPost = new Error('You are not authorized to delete this post');
+        error.statusCode = 403;
+        throw errPost;
+      }
       if (imageUrl !== post.imageUrl) {
         clearImage(post.imageUrl);
       }
@@ -160,8 +165,20 @@ exports.deletePost = (req, res, next) => {
         error.statusCode = 404;
         throw error;
       }
+      if (post.creator.toString() !== req.userId) {
+        const errPost = new Error('You are not authorized to delete this post');
+        errPost.statusCode = 403;
+        throw errPost;
+      }
       clearImage(post.imageUrl);
       return Post.findByIdAndRemove(postId);
+    })
+    .then((response) => {
+      return User.findById(req.userId);
+    })
+    .then((user) => {
+      user.posts.pull(postId);
+      return user.save();
     })
     .then((response) => {
       res

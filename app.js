@@ -69,8 +69,19 @@ app.use((error, req, res, next) => {
 mongoose
   .connect(MONGODB_URI)
   .then((result) => {
-    app.listen(8080, () => {
-      console.log('App is listening at http://localhost:8080');
+    const server = app.listen(8080, ()=> {
+      console.log('Server is running on port 8080');
+    });
+    // console.log('SERVER:',server);
+    const io = require('socket.io')(server, {
+      cors: {
+        origin: 'http://localhost:3000',
+        methods: ['GET', 'POST'],
+      },
+    });
+    io.on('connection', (socket) => {
+      console.log('Client Connected!!');
+      // console.log('Socket:::', socket);
     });
   })
   .catch((err) => {
